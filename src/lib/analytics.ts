@@ -1,0 +1,69 @@
+// Analytics utility functions
+// Supports Google Analytics and Plausible
+
+type AnalyticsEvent = {
+  action: string;
+  category: string;
+  label?: string;
+  value?: number;
+};
+
+/**
+ * Track a custom event
+ * Works with both Google Analytics and Plausible
+ */
+export const trackEvent = ({ action, category, label, value }: AnalyticsEvent) => {
+  // Google Analytics (gtag)
+  if (typeof window !== 'undefined' && (window as any).gtag) {
+    (window as any).gtag('event', action, {
+      event_category: category,
+      event_label: label,
+      value: value,
+    });
+  }
+
+  // Plausible Analytics
+  if (typeof window !== 'undefined' && (window as any).plausible) {
+    (window as any).plausible(action, {
+      props: {
+        category,
+        label,
+        value,
+      },
+    });
+  }
+
+  // Log in development
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[Analytics]', { action, category, label, value });
+  }
+};
+
+/**
+ * Track external link clicks
+ */
+export const trackExternalLink = (url: string, label: string) => {
+  trackEvent({
+    action: 'click_external_link',
+    category: 'engagement',
+    label: `${label} - ${url}`,
+  });
+};
+
+/**
+ * Track page views (for SPAs)
+ */
+export const trackPageView = (path: string) => {
+  // Google Analytics
+  if (typeof window !== 'undefined' && (window as any).gtag) {
+    (window as any).gtag('config', (window as any).GA_MEASUREMENT_ID, {
+      page_path: path,
+    });
+  }
+
+  // Plausible automatically tracks page views
+  
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[Analytics] Page view:', path);
+  }
+};
