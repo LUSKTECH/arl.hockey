@@ -85,8 +85,8 @@ const Index = () => {
           <Card className="group hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-card dark:bg-card h-full">
             <CardContent className="p-8 h-full">
               <div className="flex flex-col items-center text-center h-full">
-                <div className="w-20 h-20 bg-navy-deep dark:bg-secondary rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 mb-6">
-                  <Shield className="h-10 w-10 text-white dark:text-secondary-foreground" />
+                <div className="w-20 h-20 bg-primary dark:bg-secondary rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 mb-6">
+                  <Shield className="h-10 w-10 text-primary-foreground dark:text-secondary-foreground" />
                 </div>
                 <h2 className="text-3xl font-bold mb-4 text-navy-deep dark:text-primary">ARL Board</h2>
                 <p className="text-lg text-muted-foreground mb-6 leading-relaxed flex-grow">
