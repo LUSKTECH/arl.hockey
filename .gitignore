@@ -99,7 +99,12 @@ Thumbs.db
 # --- Uploaded Files ---
 uploaded_files/
 
-
-# --- Audited Exclusions ---
+# --- AI Junk ---
 .kiro/
-_archive/
+.gemini/
+.cursor/
+.windsurf/
+.aider/
+.cline/
+.specstory/
+.llm/
