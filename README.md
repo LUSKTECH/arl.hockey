@@ -84,3 +84,7 @@ public/
 - Theme support (light/dark/system)
 - Responsive design for mobile and desktop
 - Optimized for performance with Vite
+
+## AI Usage Disclaimer
+
+Portions of this codebase were generated with the assistance of Large Language Models (LLMs). All AI-generated code has been reviewed and tested to ensure quality and correctness.
