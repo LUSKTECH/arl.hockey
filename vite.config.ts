@@ -1,5 +1,6 @@
 // vite.config.ts
 import { defineConfig, type Plugin } from 'vite';
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 import react from '@vitejs/plugin-react-swc';
 import fs from 'node:fs/promises';
 import nodePath from 'node:path';
@@ -212,6 +213,11 @@ export default defineConfig(({ mode }) => {
       mode === 'development' &&
       componentTagger(),
       cdnPrefixImages(),
+      sentryVitePlugin({
+        org: "lusktech",
+        project: "arl-hockey",
+        authToken: process.env.SENTRY_AUTH_TOKEN,
+      }),
     ].filter(Boolean),
     resolve: {
       alias: {
@@ -227,7 +233,7 @@ export default defineConfig(({ mode }) => {
       // In production, this will be false by default unless explicitly set to 'true'
       // In development and test, this will be true by default
       __ROUTE_MESSAGING_ENABLED__: JSON.stringify(
-        mode === 'production' 
+        mode === 'production'
           ? process.env.VITE_ENABLE_ROUTE_MESSAGING === 'true'
           : process.env.VITE_ENABLE_ROUTE_MESSAGING !== 'false'
       ),

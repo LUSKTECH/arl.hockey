@@ -108,3 +108,5 @@ uploaded_files/
 .cline/
 .specstory/
 .llm/
+# Sentry Config File
+.env.sentry-build-plugin
