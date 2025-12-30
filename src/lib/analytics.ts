@@ -1,5 +1,7 @@
 // Analytics utility functions
 // Supports Google Analytics and Plausible
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-console */
 
 type AnalyticsEvent = {
   action: string;
@@ -62,7 +64,7 @@ export const trackPageView = (path: string) => {
   }
 
   // Plausible automatically tracks page views
-  
+
   if (process.env.NODE_ENV === 'development') {
     console.log('[Analytics] Page view:', path);
   }

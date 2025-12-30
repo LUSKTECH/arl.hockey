@@ -1,4 +1,5 @@
 // vite.config.ts
+/* eslint-disable no-console */
 import { defineConfig, type Plugin } from 'vite';
 import { sentryVitePlugin } from "@sentry/vite-plugin";
 import react from '@vitejs/plugin-react-swc';

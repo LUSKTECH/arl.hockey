@@ -1,4 +1,10 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable react-refresh/only-export-components */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-console */
+/* eslint-disable react-hooks/exhaustive-deps */
 import * as React from "react";
+
 
 // Runtime import of the real library under a different name (see vite.config alias)
 // @ts-ignore - This is resolved at runtime by Vite alias
@@ -23,8 +29,8 @@ const routesReadyOrTimeout = (ms = 1200) =>
 
 type AnyEl = React.ReactNode;
 
-function normalize(p: string) { 
-  return p.replace(/\/+/g, "/"); 
+function normalize(p: string) {
+  return p.replace(/\/+/g, "/");
 }
 
 function join(base: string, child?: string) {
@@ -39,10 +45,10 @@ function flattenRoutes(node: AnyEl, base = "", acc = new Set<string>()) {
     const isRoute = child.type === (RRD as any).Route ||
       (typeof child.type === "function" && (child.type as any).name === "Route");
     if (isRoute) {
-      const { path, index, children } = (child.props ?? {}) as { 
-        path?: string; 
-        index?: boolean; 
-        children?: AnyEl; 
+      const { path, index, children } = (child.props ?? {}) as {
+        path?: string;
+        index?: boolean;
+        children?: AnyEl;
       };
       const cur = index ? (base || "/") : (path ? join(base, path) : base);
       if (index || path) acc.add(cur || "/");
@@ -59,17 +65,17 @@ function postAllRoutesOnce(children: AnyEl) {
   if (routesPosted) return;
   try {
     const list = Array.from(flattenRoutes(children)).sort();
-    
+
     // Always log routes in development for debugging
     if (process.env.NODE_ENV === 'development') {
       console.log('Routes:', list);
     }
-    
+
     // Check if route messaging is enabled
     if (!__ROUTE_MESSAGING_ENABLED__) {
       return;
     }
-    
+
     if (window.top && window.top !== window) {
       // Use the same format as ROUTES_INFO in use-route-messenger
       const routesForMessage = list.map(route => ({
@@ -105,12 +111,12 @@ function emitRouteChange(location: ReturnType<typeof RRD.useLocation>) {
   const path = `${location.pathname}${location.search}${location.hash}`;
   if (path === lastEmittedPath) return;
   lastEmittedPath = path;
-  
+
   // Check if route messaging is enabled
   if (!__ROUTE_MESSAGING_ENABLED__) {
     return;
   }
-  
+
   if (window.top && window.top !== window) {
     const routeChangeMessage = {
       type: 'ROUTE_CHANGE',
@@ -145,14 +151,14 @@ function RouterBridge() {
       await routesReadyOrTimeout();   // waits for <Routes/> to post, or times out (dev-safety)
       emitRouteChange(location);
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [location.key, location.pathname, location.search, location.hash]);
 
   React.useEffect(() => {
     function onMessage(e: MessageEvent) {
       const data = e.data as IframeCmd | any;
       if (!data) return;
-      
+
       // Check if route messaging is enabled
       if (!__ROUTE_MESSAGING_ENABLED__) {
         return;
@@ -161,7 +167,7 @@ function RouterBridge() {
       try {
         if (data.type === "ROUTE_CONTROL") {
           const { action, path, replace = false } = data;
-          
+
           if (process.env.NODE_ENV === 'development') {
             console.log('Received route control command:', data);
           }
@@ -177,21 +183,21 @@ function RouterBridge() {
                 console.error('Route control: path is required for navigate action');
               }
               break;
-              
+
             case 'back':
               navigate(-1);
               if (process.env.NODE_ENV === 'development') {
                 console.log('Navigated back');
               }
               break;
-              
+
             case 'forward':
               navigate(1);
               if (process.env.NODE_ENV === 'development') {
                 console.log('Navigated forward');
               }
               break;
-              
+
             case 'replace':
               if (path) {
                 navigate(path, { replace: true });
@@ -202,7 +208,7 @@ function RouterBridge() {
                 console.error('Route control: path is required for replace action');
               }
               break;
-              
+
             default:
               if (process.env.NODE_ENV === 'development') {
                 console.warn('Route control: unknown action', action);
