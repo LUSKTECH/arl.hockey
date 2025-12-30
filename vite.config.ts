@@ -28,7 +28,7 @@ function cdnPrefixImages(): Plugin {
     // quick bail-outs
     if (isAbsolute(s)) return s;
     // strip leading ./ and any ../ segments (we treat public/ as root at runtime)
-    s = s.replace(/^(\.\/)+/, '');
+    s = s.replaceAll(/^(\.\/)+/g, '');
     while (s.startsWith('../')) s = s.slice(3);
     if (s.startsWith('/')) s = s.slice(1);
     // ensure it starts with images/
@@ -57,12 +57,12 @@ function cdnPrefixImages(): Plugin {
 
   const rewriteHtml = (html: string, cdn: string) => {
     // src / href
-    html = html.replace(
+    html = html.replaceAll(
       /(src|href)\s*=\s*(['"])([^'"]+)\2/g,
       (_m, k, q, p) => `${k}=${q}${toCDN(p, cdn)}${q}`
     );
     // srcset
-    html = html.replace(
+    html = html.replaceAll(
       /(srcset)\s*=\s*(['"])([^'"]+)\2/g,
       (_m, k, q, list) => `${k}=${q}${rewriteSrcsetList(list, cdn)}${q}`
     );
@@ -70,7 +70,7 @@ function cdnPrefixImages(): Plugin {
   };
 
   const rewriteCssUrls = (code: string, cdn: string) =>
-    code.replace(/url\((['"]?)([^'")]+)\1\)/g, (_m, q, p) => `url(${q}${toCDN(p, cdn)}${q})`);
+    code.replaceAll(/url\((['"]?)([^'")]+)\1\)/g, (_m, q, p) => `url(${q}${toCDN(p, cdn)}${q})`);
 
   const rewriteJsxAst = (code: string, id: string, cdn: string) => {
     const ast = parse(code, { sourceType: 'module', plugins: ['typescript', 'jsx'] });
@@ -150,7 +150,7 @@ function cdnPrefixImages(): Plugin {
         if (ent.isDirectory()) {
           stack.push(full);
         } else if (ent.isFile()) {
-          const rel = nodePath.relative(dir, full).split(nodePath.sep).join('/');
+          const rel = nodePath.relative(dir, full).replaceAll(nodePath.sep, '/');
           const canonical = '/' + rel; // '/images/...'
           imageSet.add(canonical);
           // also add variant without leading slash for safety

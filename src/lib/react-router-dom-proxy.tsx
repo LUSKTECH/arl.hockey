@@ -14,10 +14,15 @@ import * as RRD from "react-router-dom-original";
 // @ts-ignore - This is resolved at runtime by Vite alias
 export * from "react-router-dom-original";
 
+const TARGET_ORIGIN = import.meta.env.VITE_ROUTE_MSG_ORIGIN || "*";
+
+
+
 /** --------------------- Outbound: route list (once) --------------------- */
 let routesPosted = false;
 
 // Create a promise that resolves once routes are posted
+
 let resolveRoutesReady: (() => void) | null = null;
 const routesReadyPromise = new Promise<void>((res) => {
   resolveRoutesReady = res;
@@ -30,7 +35,7 @@ const routesReadyOrTimeout = (ms = 1200) =>
 type AnyEl = React.ReactNode;
 
 function normalize(p: string) {
-  return p.replace(/\/+/g, "/");
+  return p.replaceAll(/\/+/g, "/");
 }
 
 function join(base: string, child?: string) {
@@ -64,7 +69,7 @@ function flattenRoutes(node: AnyEl, base = "", acc = new Set<string>()) {
 function postAllRoutesOnce(children: AnyEl) {
   if (routesPosted) return;
   try {
-    const list = Array.from(flattenRoutes(children)).sort();
+    const list = Array.from(flattenRoutes(children)).sort((a, b) => a.localeCompare(b));
 
     // Always log routes in development for debugging
     if (process.env.NODE_ENV === 'development') {
@@ -88,7 +93,7 @@ function postAllRoutesOnce(children: AnyEl) {
         timestamp: Date.now()
       };
 
-      window.top.postMessage(routesMessage, "*");
+      window.top.postMessage(routesMessage, TARGET_ORIGIN);
     }
   } finally {
     routesPosted = true;
@@ -128,7 +133,7 @@ function emitRouteChange(location: ReturnType<typeof RRD.useLocation>) {
       timestamp: Date.now()
     };
 
-    window.top.postMessage(routeChangeMessage, "*");
+    window.top.postMessage(routeChangeMessage, TARGET_ORIGIN);
   }
 }
 
@@ -158,6 +163,14 @@ function RouterBridge() {
     function onMessage(e: MessageEvent) {
       const data = e.data as IframeCmd | any;
       if (!data) return;
+
+      // Verify origin
+      if (TARGET_ORIGIN !== "*" && e.origin !== TARGET_ORIGIN) {
+        if (process.env.NODE_ENV === 'development') {
+          console.warn(`Ignored message from unauthorized origin: ${e.origin}`);
+        }
+        return;
+      }
 
       // Check if route messaging is enabled
       if (!__ROUTE_MESSAGING_ENABLED__) {
