@@ -14,3 +14,8 @@ Object.defineProperty(window, 'matchMedia', {
     }),
 })
 
+global.ResizeObserver = class ResizeObserver {
+    observe() { }
+    unobserve() { }
+    disconnect() { }
+};
