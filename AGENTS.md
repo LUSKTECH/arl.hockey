@@ -1,11 +1,13 @@
+# AGENTS.md
+
 These examples should be used as guidance when configuring Sentry functionality within a project.
 
-# Error / Exception Tracking
+## Error / Exception Tracking
 
 Use `Sentry.captureException(error)` to capture an exception and log the error in Sentry.
 Use this in try catch blocks or areas where exceptions are expected
 
-# Tracing Examples
+## Tracing Examples
 
 Spans should be created for meaningful actions within applications like button clicks, API calls, and function calls
 Ensure you are creating custom spans with meaningful names and operations
@@ -59,7 +61,7 @@ async function fetchUserData(userId) {
 }
 ```
 
-# Logs
+## Logs
 
 Where logs are used, ensure Sentry is imported using `import * as Sentry from "@sentry/react"`
 Enable logging in Sentry using `Sentry.init({ enableLogs: true })`
