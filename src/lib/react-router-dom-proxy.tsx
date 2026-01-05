@@ -55,7 +55,17 @@ function flattenRoutes(node: AnyEl, base = "", acc = new Set<string>()) {
         index?: boolean;
         children?: AnyEl;
       };
-      const cur = index ? (base || "/") : (path ? join(base, path) : base);
+      
+      // Determine current route path
+      let cur: string;
+      if (index) {
+        cur = base || "/";
+      } else if (path) {
+        cur = join(base, path);
+      } else {
+        cur = base;
+      }
+      
       if (index || path) acc.add(cur || "/");
       if (children) flattenRoutes(children, cur, acc);
     } else {
@@ -81,7 +91,7 @@ function postAllRoutesOnce(children: AnyEl) {
       return;
     }
 
-    if (window.top && window.top !== window) {
+    if (globalThis.top && globalThis.top !== globalThis.window) {
       // Use the same format as ROUTES_INFO in use-route-messenger
       const routesForMessage = list.map(route => ({
         path: route
@@ -93,7 +103,7 @@ function postAllRoutesOnce(children: AnyEl) {
         timestamp: Date.now()
       };
 
-      window.top.postMessage(routesMessage, TARGET_ORIGIN);
+      globalThis.top.postMessage(routesMessage, TARGET_ORIGIN);
     }
   } finally {
     routesPosted = true;
@@ -122,18 +132,18 @@ function emitRouteChange(location: ReturnType<typeof RRD.useLocation>) {
     return;
   }
 
-  if (window.top && window.top !== window) {
+  if (globalThis.top && globalThis.top !== globalThis.window) {
     const routeChangeMessage = {
       type: 'ROUTE_CHANGE',
       path: location.pathname,
       hash: location.hash,
       search: location.search,
       fullPath: location.pathname + location.search + location.hash,
-      fullUrl: window.location.href,
+      fullUrl: globalThis.location.href,
       timestamp: Date.now()
     };
 
-    window.top.postMessage(routeChangeMessage, TARGET_ORIGIN);
+    globalThis.top.postMessage(routeChangeMessage, TARGET_ORIGIN);
   }
 }
 
@@ -144,6 +154,106 @@ type IframeCmd =
   | { type: "ROUTE_CONTROL"; action: "forward"; }
   | { type: "ROUTE_CONTROL"; action: "replace"; path: string; }
   | { type: "RELOAD"; };
+
+/** Handle route control messages */
+function handleRouteControl(data: IframeCmd, navigate: ReturnType<typeof RRD.useNavigate>) {
+  if (data.type === "RELOAD") {
+    globalThis.location.reload();
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Reloaded');
+    }
+    return;
+  }
+
+  if (data.type !== "ROUTE_CONTROL") {
+    return;
+  }
+
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Received route control command:', data);
+  }
+
+  handleNavigationAction(data, navigate);
+}
+
+/** Handle navigation actions */
+function handleNavigationAction(
+  data: Extract<IframeCmd, { type: "ROUTE_CONTROL" }>,
+  navigate: ReturnType<typeof RRD.useNavigate>
+) {
+  const { action } = data;
+
+  switch (action) {
+    case 'navigate':
+      handleNavigate(data, navigate);
+      break;
+
+    case 'back':
+      handleBack(navigate);
+      break;
+
+    case 'forward':
+      handleForward(navigate);
+      break;
+
+    case 'replace':
+      handleReplace(data, navigate);
+      break;
+
+    default:
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('Route control: unknown action', action);
+      }
+  }
+}
+
+/** Handle navigate action */
+function handleNavigate(
+  data: Extract<IframeCmd, { type: "ROUTE_CONTROL"; action: "navigate" }>,
+  navigate: ReturnType<typeof RRD.useNavigate>
+) {
+  const { path, replace = false } = data;
+  if (path) {
+    navigate(path, { replace });
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`Navigated to: ${path} (replace: ${replace})`);
+    }
+  } else if (process.env.NODE_ENV === 'development') {
+    console.error('Route control: path is required for navigate action');
+  }
+}
+
+/** Handle back action */
+function handleBack(navigate: ReturnType<typeof RRD.useNavigate>) {
+  navigate(-1);
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Navigated back');
+  }
+}
+
+/** Handle forward action */
+function handleForward(navigate: ReturnType<typeof RRD.useNavigate>) {
+  navigate(1);
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Navigated forward');
+  }
+}
+
+/** Handle replace action */
+function handleReplace(
+  data: Extract<IframeCmd, { type: "ROUTE_CONTROL"; action: "replace" }>,
+  navigate: ReturnType<typeof RRD.useNavigate>
+) {
+  const { path } = data;
+  if (path) {
+    navigate(path, { replace: true });
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`Replaced route with: ${path}`);
+    }
+  } else if (process.env.NODE_ENV === 'development') {
+    console.error('Route control: path is required for replace action');
+  }
+}
 
 /** A component that lives inside the router context and bridges both ways */
 function RouterBridge() {
@@ -161,7 +271,7 @@ function RouterBridge() {
 
   React.useEffect(() => {
     function onMessage(e: MessageEvent) {
-      const data = e.data as IframeCmd | any;
+      const data = e.data as IframeCmd;
       if (!data) return;
 
       // Verify origin
@@ -178,69 +288,15 @@ function RouterBridge() {
       }
 
       try {
-        if (data.type === "ROUTE_CONTROL") {
-          const { action, path, replace = false } = data;
-
-          if (process.env.NODE_ENV === 'development') {
-            console.log('Received route control command:', data);
-          }
-
-          switch (action) {
-            case 'navigate':
-              if (path) {
-                navigate(path, { replace });
-                if (process.env.NODE_ENV === 'development') {
-                  console.log(`Navigated to: ${path} (replace: ${replace})`);
-                }
-              } else if (process.env.NODE_ENV === 'development') {
-                console.error('Route control: path is required for navigate action');
-              }
-              break;
-
-            case 'back':
-              navigate(-1);
-              if (process.env.NODE_ENV === 'development') {
-                console.log('Navigated back');
-              }
-              break;
-
-            case 'forward':
-              navigate(1);
-              if (process.env.NODE_ENV === 'development') {
-                console.log('Navigated forward');
-              }
-              break;
-
-            case 'replace':
-              if (path) {
-                navigate(path, { replace: true });
-                if (process.env.NODE_ENV === 'development') {
-                  console.log(`Replaced route with: ${path}`);
-                }
-              } else if (process.env.NODE_ENV === 'development') {
-                console.error('Route control: path is required for replace action');
-              }
-              break;
-
-            default:
-              if (process.env.NODE_ENV === 'development') {
-                console.warn('Route control: unknown action', action);
-              }
-          }
-        } else if (data.type === "RELOAD") {
-          window.location.reload();
-          if (process.env.NODE_ENV === 'development') {
-            console.log('Reloaded');
-          }
-        }
+        handleRouteControl(data, navigate);
       } catch (error) {
         if (process.env.NODE_ENV === 'development') {
           console.error('Route control error:', error);
         }
       }
     }
-    window.addEventListener("message", onMessage);
-    return () => window.removeEventListener("message", onMessage);
+    globalThis.addEventListener("message", onMessage);
+    return () => globalThis.removeEventListener("message", onMessage);
   }, [navigate]);
 
   return null;
@@ -258,13 +314,16 @@ function withBridge(children: React.ReactNode) {
 }
 
 export function HashRouter(props: React.ComponentProps<typeof RRD.HashRouter>) {
-  return <RRD.HashRouter {...props}>{withBridge(props.children)}</RRD.HashRouter>;
+  const RouterComponent = RRD.HashRouter;
+  return <RouterComponent {...props}>{withBridge(props.children)}</RouterComponent>;
 }
 
 export function BrowserRouter(props: React.ComponentProps<typeof RRD.BrowserRouter>) {
-  return <RRD.BrowserRouter {...props}>{withBridge(props.children)}</RRD.BrowserRouter>;
+  const RouterComponent = RRD.BrowserRouter;
+  return <RouterComponent {...props}>{withBridge(props.children)}</RouterComponent>;
 }
 
 export function MemoryRouter(props: React.ComponentProps<typeof RRD.MemoryRouter>) {
-  return <RRD.MemoryRouter {...props}>{withBridge(props.children)}</RRD.MemoryRouter>;
+  const RouterComponent = RRD.MemoryRouter;
+  return <RouterComponent {...props}>{withBridge(props.children)}</RouterComponent>;
 }

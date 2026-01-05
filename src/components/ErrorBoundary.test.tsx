@@ -1,6 +1,12 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ErrorBoundary } from './ErrorBoundary';
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
+import * as Sentry from '@sentry/react';
+
+// Mock Sentry
+vi.mock('@sentry/react', () => ({
+    captureException: vi.fn(),
+}));
 
 const ThrowError = ({ shouldThrow }: { shouldThrow?: boolean }) => {
     if (shouldThrow) {
@@ -17,6 +23,7 @@ describe('ErrorBoundary', () => {
 
     beforeEach(() => {
         console.error = consoleErrorMock;
+        vi.clearAllMocks();
     });
 
     afterEach(() => {
@@ -41,25 +48,39 @@ describe('ErrorBoundary', () => {
 
         expect(screen.getByText('Oops! Something went wrong')).toBeInTheDocument();
         expect(screen.getByText('Try Again')).toBeInTheDocument();
-
-        // Check development error message if relevant (might depend on NODE_ENV in test setup)
-        // Default vitest environment NODE_ENV is 'test', so logic:
-        // {process.env.NODE_ENV === "development" && ...} 
-        // We might want to force dev env to test that branch.
     });
 
-    it('should reset error state on Try Again', () => {
-        const { rerender } = render(
+    it('should capture error with Sentry', () => {
+        render(
             <ErrorBoundary>
                 <ThrowError shouldThrow />
             </ErrorBoundary>
         );
 
-        fireEvent.click(screen.getByText('Try Again'));
+        expect(Sentry.captureException).toHaveBeenCalledTimes(1);
+        expect(Sentry.captureException).toHaveBeenCalledWith(
+            expect.any(Error),
+            expect.objectContaining({
+                contexts: {
+                    react: {
+                        componentStack: expect.any(String),
+                    },
+                },
+            })
+        );
+    });
 
-        // After reset, if it re-renders and throws again, it goes back to error?
-        // Or if we change the prop effectively?
-        // With static 'ThrowError shouldThrow', it immediately throws again.
-        // But verifying the click handler fires is good.
+    it('should reset error state on Try Again', () => {
+        render(
+            <ErrorBoundary>
+                <ThrowError shouldThrow />
+            </ErrorBoundary>
+        );
+
+        const tryAgainButton = screen.getByText('Try Again');
+        fireEvent.click(tryAgainButton);
+
+        // After clicking Try Again, the error state should be reset
+        // The component will re-render and if the child doesn't throw again, it should show children
     });
 });

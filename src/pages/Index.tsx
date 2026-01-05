@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ExternalLink, Users, Shield, Calendar, MapPin } from "lucide-react";
@@ -5,6 +6,32 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { trackExternalLink } from "@/lib/analytics";
 
 const Index = () => {
+  const handleLeagueClick = () => {
+    Sentry.startSpan(
+      {
+        op: "ui.click",
+        name: "League Site Navigation",
+      },
+      () => {
+        trackExternalLink('https://www.rookiehockey.ca', 'ARL Hockey League');
+        window.open('https://www.rookiehockey.ca', '_blank', 'noopener,noreferrer');
+      }
+    );
+  };
+
+  const handleBoardClick = () => {
+    Sentry.startSpan(
+      {
+        op: "ui.click",
+        name: "Board Site Navigation",
+      },
+      () => {
+        trackExternalLink('https://board.arl.hockey', 'ARL Board');
+        window.open('https://board.arl.hockey', '_blank', 'noopener,noreferrer');
+      }
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-ice-white to-secondary dark:from-gray-900 dark:to-gray-800">
       {/* Theme Toggle */}
@@ -69,13 +96,11 @@ const Index = () => {
                 <Button 
                   size="lg" 
                   className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-3 px-8 rounded-xl transition-all duration-300 group-hover:shadow-lg mt-auto"
-                  onClick={() => {
-                    trackExternalLink('https://www.rookiehockey.ca', 'ARL Hockey League');
-                    window.open('https://www.rookiehockey.ca', '_blank');
-                  }}
+                  onClick={handleLeagueClick}
+                  aria-label="Visit ARL Hockey League website"
                 >
                   Visit League Site
-                  <ExternalLink className="ml-2 h-5 w-5" />
+                  <ExternalLink className="ml-2 h-5 w-5" aria-hidden="true" />
                 </Button>
               </div>
             </CardContent>
@@ -107,13 +132,11 @@ const Index = () => {
                   size="lg" 
                   variant="outline"
                   className="w-full border-2 border-navy-deep text-navy-deep hover:bg-navy-deep hover:text-white dark:border-primary dark:text-primary dark:hover:bg-primary dark:hover:text-primary-foreground font-semibold py-3 px-8 rounded-xl transition-all duration-300 group-hover:shadow-lg mt-auto"
-                  onClick={() => {
-                    trackExternalLink('https://board.arl.hockey', 'ARL Board');
-                    window.open('https://board.arl.hockey', '_blank');
-                  }}
+                  onClick={handleBoardClick}
+                  aria-label="Visit ARL Board website"
                 >
                   Visit Board Site
-                  <ExternalLink className="ml-2 h-5 w-5" />
+                  <ExternalLink className="ml-2 h-5 w-5" aria-hidden="true" />
                 </Button>
               </div>
             </CardContent>
@@ -138,7 +161,7 @@ const Index = () => {
             '/images/hockey_action_6.webp',
             '/images/hockey_action_1.webp'
           ].map((image, index) => (
-            <div key={index} className="aspect-video rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 bg-muted">
+            <div key={image} className="aspect-video rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 bg-muted">
               <img 
                 src={image} 
                 alt={`ARL Hockey action shot ${index + 1}`}

@@ -16,8 +16,8 @@ type AnalyticsEvent = {
  */
 export const trackEvent = ({ action, category, label, value }: AnalyticsEvent) => {
   // Google Analytics (gtag)
-  if (typeof window !== 'undefined' && (window as any).gtag) {
-    (window as any).gtag('event', action, {
+  if (globalThis.window !== undefined && (globalThis as any).gtag) {
+    (globalThis as any).gtag('event', action, {
       event_category: category,
       event_label: label,
       value: value,
@@ -25,8 +25,8 @@ export const trackEvent = ({ action, category, label, value }: AnalyticsEvent) =
   }
 
   // Plausible Analytics
-  if (typeof window !== 'undefined' && (window as any).plausible) {
-    (window as any).plausible(action, {
+  if (globalThis.window !== undefined && (globalThis as any).plausible) {
+    (globalThis as any).plausible(action, {
       props: {
         category,
         label,
@@ -57,8 +57,8 @@ export const trackExternalLink = (url: string, label: string) => {
  */
 export const trackPageView = (path: string) => {
   // Google Analytics
-  if (typeof window !== 'undefined' && (window as any).gtag) {
-    (window as any).gtag('config', (window as any).GA_MEASUREMENT_ID, {
+  if (globalThis.window !== undefined && (globalThis as any).gtag) {
+    (globalThis as any).gtag('config', (globalThis as any).GA_MEASUREMENT_ID, {
       page_path: path,
     });
   }

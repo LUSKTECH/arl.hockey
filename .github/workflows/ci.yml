@@ -6,6 +6,8 @@ jobs:
   lint:
     name: Lint Code Base
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -25,6 +27,8 @@ jobs:
   test-and-analyze:
     name: Tests & Coverage
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -63,6 +67,8 @@ jobs:
     name: Sentry Release
     needs: [lint, test-and-analyze]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v6

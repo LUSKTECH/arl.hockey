@@ -4,11 +4,9 @@ import { defineConfig, type Plugin } from 'vite';
 import { sentryVitePlugin } from "@sentry/vite-plugin";
 import react from '@vitejs/plugin-react-swc';
 import fs from 'node:fs/promises';
-import nodePath from 'node:path';
+import path from 'node:path';
 import type { Dirent } from 'node:fs';
 import { componentTagger } from 'lovable-tagger';
-import path from "path";
-
 import { parse } from '@babel/parser';
 import traverse from '@babel/traverse';
 import generate from '@babel/generator';
@@ -135,7 +133,7 @@ function cdnPrefixImages(): Plugin {
 
   async function collectPublicImagesFrom(dir: string) {
     // Recursively collect every file under public/images into imageSet as '/images/relpath'
-    const imagesDir = nodePath.join(dir, 'images');
+    const imagesDir = path.join(dir, 'images');
     const stack = [imagesDir];
     while (stack.length) {
       const cur = stack.pop()!;
@@ -146,11 +144,11 @@ function cdnPrefixImages(): Plugin {
         continue; // images/ may not exist
       }
       for (const ent of entries) {
-        const full = nodePath.join(cur, ent.name);
+        const full = path.join(cur, ent.name);
         if (ent.isDirectory()) {
           stack.push(full);
         } else if (ent.isFile()) {
-          const rel = nodePath.relative(dir, full).replaceAll(nodePath.sep, '/');
+          const rel = path.relative(dir, full).replaceAll(path.sep, '/');
           const canonical = '/' + rel; // '/images/...'
           imageSet.add(canonical);
           // also add variant without leading slash for safety

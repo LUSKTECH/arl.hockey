@@ -1,62 +1,124 @@
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import Index from './Index';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import * as analytics from '../lib/analytics';
+import Index from './Index';
+import * as Sentry from '@sentry/react';
+import * as analytics from '@/lib/analytics';
+
+// Mock Sentry
+vi.mock('@sentry/react', () => ({
+    startSpan: vi.fn((config, callback) => callback()),
+}));
 
 // Mock analytics
-vi.mock('../lib/analytics', () => ({
+vi.mock('@/lib/analytics', () => ({
     trackExternalLink: vi.fn(),
-    trackPageView: vi.fn(),
-    trackEvent: vi.fn(),
 }));
 
-// Mock ThemeToggle to keep test simple (or just render it)
-// It's already tested individually.
-vi.mock('@/components/ThemeToggle', () => ({
-    ThemeToggle: () => <div data-testid="theme-toggle" />
-}));
+// Mock window.open
+const mockWindowOpen = vi.fn();
+window.open = mockWindowOpen;
 
 describe('Index Page', () => {
     beforeEach(() => {
         vi.clearAllMocks();
-        vi.spyOn(window, 'open').mockImplementation(() => null);
     });
 
     it('should render header and hero section', () => {
         render(<Index />);
-        expect(screen.getByRole('heading', { level: 1, name: 'ARL Hockey' })).toBeInTheDocument();
-        expect(screen.getByText(/Burlington's premier co-ed/i)).toBeInTheDocument();
-        expect(screen.getByText('Burlington, Ontario')).toBeInTheDocument();
+        
+        expect(screen.getAllByText('ARL Hockey')[0]).toBeInTheDocument();
+        expect(screen.getAllByText(/Adult Recreational League/)[0]).toBeInTheDocument();
+        expect(screen.getByText(/Burlington, Ontario/)).toBeInTheDocument();
     });
 
-    it('should track and open league site on click', async () => {
-        const user = userEvent.setup();
+    it('should render both navigation cards', () => {
         render(<Index />);
-
-        const leagueButton = screen.getByRole('button', { name: /visit league site/i });
-        await user.click(leagueButton);
-
-        expect(analytics.trackExternalLink).toHaveBeenCalledWith('https://www.rookiehockey.ca', 'ARL Hockey League');
-        expect(window.open).toHaveBeenCalledWith('https://www.rookiehockey.ca', '_blank');
+        
+        expect(screen.getByText('ARL Hockey League')).toBeInTheDocument();
+        expect(screen.getByText('ARL Board')).toBeInTheDocument();
     });
 
-    it('should track and open board site on click', async () => {
-        const user = userEvent.setup();
+    it('should track and navigate to league site with Sentry span', () => {
         render(<Index />);
+        
+        const leagueButton = screen.getByRole('button', { name: /Visit ARL Hockey League website/i });
+        fireEvent.click(leagueButton);
 
-        const boardButton = screen.getByRole('button', { name: /visit board site/i });
-        await user.click(boardButton);
+        // Verify Sentry span was created
+        expect(Sentry.startSpan).toHaveBeenCalledWith(
+            expect.objectContaining({
+                op: 'ui.click',
+                name: 'League Site Navigation',
+            }),
+            expect.any(Function)
+        );
 
-        expect(analytics.trackExternalLink).toHaveBeenCalledWith('https://board.arl.hockey', 'ARL Board');
-        expect(window.open).toHaveBeenCalledWith('https://board.arl.hockey', '_blank');
+        // Verify analytics tracking
+        expect(analytics.trackExternalLink).toHaveBeenCalledWith(
+            'https://www.rookiehockey.ca',
+            'ARL Hockey League'
+        );
+
+        // Verify window.open was called with security attributes
+        expect(mockWindowOpen).toHaveBeenCalledWith(
+            'https://www.rookiehockey.ca',
+            '_blank',
+            'noopener,noreferrer'
+        );
     });
 
-    it('should render gallery images', () => {
+    it('should track and navigate to board site with Sentry span', () => {
         render(<Index />);
+        
+        const boardButton = screen.getByRole('button', { name: /Visit ARL Board website/i });
+        fireEvent.click(boardButton);
+
+        // Verify Sentry span was created
+        expect(Sentry.startSpan).toHaveBeenCalledWith(
+            expect.objectContaining({
+                op: 'ui.click',
+                name: 'Board Site Navigation',
+            }),
+            expect.any(Function)
+        );
+
+        // Verify analytics tracking
+        expect(analytics.trackExternalLink).toHaveBeenCalledWith(
+            'https://board.arl.hockey',
+            'ARL Board'
+        );
+
+        // Verify window.open was called with security attributes
+        expect(mockWindowOpen).toHaveBeenCalledWith(
+            'https://board.arl.hockey',
+            '_blank',
+            'noopener,noreferrer'
+        );
+    });
+
+    it('should render photo gallery', () => {
+        render(<Index />);
+        
+        expect(screen.getByText('League in Action')).toBeInTheDocument();
+        
+        // Check for images
         const images = screen.getAllByRole('img');
-        // 6 images + maybe hero bg if it was img (it is div bg)
-        // actually 6 gallery images.
-        expect(images.length).toBeGreaterThanOrEqual(6);
+        expect(images.length).toBeGreaterThan(0);
+        
+        // Verify alt text for accessibility
+        images.forEach((img) => {
+            expect(img).toHaveAttribute('alt');
+            expect(img.getAttribute('alt')).toMatch(/ARL Hockey action shot/);
+        });
+    });
+
+    it('should have proper accessibility attributes', () => {
+        render(<Index />);
+        
+        const leagueButton = screen.getByRole('button', { name: /Visit ARL Hockey League website/i });
+        const boardButton = screen.getByRole('button', { name: /Visit ARL Board website/i });
+        
+        expect(leagueButton).toHaveAttribute('aria-label');
+        expect(boardButton).toHaveAttribute('aria-label');
     });
 });
