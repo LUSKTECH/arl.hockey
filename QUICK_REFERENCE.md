@@ -200,8 +200,6 @@ Check browser console for CSP errors. Update `netlify.toml` CSP header if needed
 
 ## 📚 Documentation
 
-- **SECURITY_REVIEW.md** - Detailed security audit
-- **IMPLEMENTATION_SUMMARY.md** - Changes made
 - **QUICK_REFERENCE.md** - This file
 - **AGENTS.md** - Sentry integration guide
 - **README.md** - Project overview

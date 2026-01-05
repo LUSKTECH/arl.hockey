@@ -8,7 +8,12 @@ Sentry.init({
     tunnel: "/tunnel",
     integrations: [
         Sentry.consoleLoggingIntegration({ levels: ["log", "error", "warn"] }),
+        Sentry.browserTracingIntegration(),
     ],
+    // Performance Monitoring
+    tracesSampleRate: import.meta.env.PROD ? 0.1 : 1, // 10% in production, 100% in dev
+    // Profiling
+    profilesSampleRate: import.meta.env.PROD ? 0.1 : 1, // 10% in production, 100% in dev
 });
 
 

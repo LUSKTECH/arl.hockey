@@ -11,6 +11,7 @@ import { parse } from '@babel/parser';
 import traverse from '@babel/traverse';
 import generate from '@babel/generator';
 import * as t from '@babel/types';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 function cdnPrefixImages(): Plugin {
   const DEBUG = process.env.CDN_IMG_DEBUG === '1';
@@ -217,6 +218,13 @@ export default defineConfig(({ mode }) => {
         project: "arl-hockey",
         authToken: process.env.SENTRY_AUTH_TOKEN,
       }),
+      // Bundle analyzer - generates stats.html after build
+      mode === 'production' && visualizer({
+        filename: './dist/stats.html',
+        open: false,
+        gzipSize: true,
+        brotliSize: true,
+      }),
     ].filter(Boolean),
     resolve: {
       alias: {
@@ -236,6 +244,27 @@ export default defineConfig(({ mode }) => {
           ? process.env.VITE_ENABLE_ROUTE_MESSAGING === 'true'
           : process.env.VITE_ENABLE_ROUTE_MESSAGING !== 'false'
       ),
+    },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            // Vendor chunk for React and related libraries
+            'react-vendor': ['react', 'react-dom', 'react-router-dom-original'],
+            // UI components chunk
+            'ui-vendor': [
+              '@radix-ui/react-slot',
+              '@radix-ui/react-toast',
+              '@radix-ui/react-tooltip',
+              'lucide-react',
+            ],
+            // Sentry chunk
+            'sentry': ['@sentry/react'],
+          },
+        },
+      },
+      // Enable source maps for better debugging
+      sourcemap: mode !== 'production',
     },
   }
 });
