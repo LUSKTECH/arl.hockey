@@ -13,7 +13,8 @@
     "preview": "vite preview",
     "preview:dev": "npm run build:dev && npm run preview",
     "test": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:junit": "vitest run --reporter=junit --reporter=default --outputFile=test-results.junit.xml"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

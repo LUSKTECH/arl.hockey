@@ -80,6 +80,7 @@ storybook-static/
 # --- E2E / testing artifacts ---
 playwright-report/
 test-results/
+test-results.junit.xml
 cypress/videos/
 cypress/screenshots/
 cypress/downloads/
