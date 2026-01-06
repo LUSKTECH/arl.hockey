@@ -12,7 +12,6 @@ import traverse from '@babel/traverse';
 import generate from '@babel/generator';
 import * as t from '@babel/types';
 import { visualizer } from 'rollup-plugin-visualizer';
-import { codecovVitePlugin } from '@codecov/vite-plugin';
 
 function cdnPrefixImages(): Plugin {
   const DEBUG = process.env.CDN_IMG_DEBUG === '1';
@@ -225,12 +224,6 @@ export default defineConfig(({ mode }) => {
         open: false,
         gzipSize: true,
         brotliSize: true,
-      }),
-      // Codecov bundle analysis - must be last
-      codecovVitePlugin({
-        enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
-        bundleName: "arl-hockey",
-        uploadToken: process.env.CODECOV_TOKEN,
       }),
     ].filter(Boolean),
     resolve: {

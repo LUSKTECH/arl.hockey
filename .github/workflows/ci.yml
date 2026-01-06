@@ -47,19 +47,22 @@ jobs:
       - name: Run Tests with Coverage
         run: npm run test:coverage -- --reporter=junit --reporter=default --outputFile=test-results.junit.xml
 
-      - name: Upload test results to Codecov
-        if: ${{ !cancelled() }}
-        uses: codecov/test-results-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./test-results.junit.xml
-
-      - name: Upload coverage reports to Codecov
+      - name: Upload coverage to Codecov
         if: ${{ !cancelled() }}
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage/lcov.info
+          flags: coverage
+
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./test-results.junit.xml
+          flags: test-results
+          report_type: test_results
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6
@@ -95,8 +98,6 @@ jobs:
 
       - name: Build
         run: npm run build
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Create Sentry Release
         uses: getsentry/action-release@v1
