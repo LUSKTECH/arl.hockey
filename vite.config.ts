@@ -12,6 +12,7 @@ import traverse from '@babel/traverse';
 import generate from '@babel/generator';
 import * as t from '@babel/types';
 import { visualizer } from 'rollup-plugin-visualizer';
+import { codecovRollupPlugin } from '@codecov/rollup-plugin';
 
 function cdnPrefixImages(): Plugin {
   const DEBUG = process.env.CDN_IMG_DEBUG === '1';
@@ -262,6 +263,14 @@ export default defineConfig(({ mode }) => {
             'sentry': ['@sentry/react'],
           },
         },
+        plugins: process.env.CODECOV_TOKEN ? [
+          // Codecov bundle analysis plugin
+          codecovRollupPlugin({
+            enableBundleAnalysis: true,
+            bundleName: 'arl-hockey',
+            uploadToken: process.env.CODECOV_TOKEN,
+          }),
+        ] : [],
       },
       // Enable source maps for better debugging
       sourcemap: mode !== 'production',

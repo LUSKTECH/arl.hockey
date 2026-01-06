@@ -98,6 +98,8 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Create Sentry Release
         uses: getsentry/action-release@v1
