@@ -129,7 +129,7 @@ src/
 ├── lib/                # Utility libraries
 │   ├── utils.ts        # cn() helper for className merging
 │   ├── analytics.ts    # Analytics tracking
-│   └── react-router-dom-proxy.tsx # Router wrapper with messaging
+│   └── react-router-dom-proxy.tsx # Router wrapper
 ├── pages/              # Page components (route views)
 │   ├── Index.tsx       # Home page
 │   └── NotFound.tsx    # 404 page
@@ -182,10 +182,6 @@ SENTRY_AUTH_TOKEN=your_sentry_auth_token
 
 # Optional: CDN Configuration
 CDN_IMG_PREFIX=https://your-cdn.com
-
-# Optional: Route Messaging (for iframe integration)
-VITE_ENABLE_ROUTE_MESSAGING=true
-VITE_ROUTE_MSG_ORIGIN=*
 ```
 
 ### Build Configuration

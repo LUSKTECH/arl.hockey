@@ -28,8 +28,4 @@ export default defineConfig({
             "react-router-dom-original": "react-router-dom",
         },
     },
-    define: {
-        // Define the same global as vite.config for tests
-        __ROUTE_MESSAGING_ENABLED__: JSON.stringify(false),
-    },
 })
