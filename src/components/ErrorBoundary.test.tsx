@@ -88,4 +88,60 @@ describe('ErrorBoundary', () => {
         expect(screen.getByText('Try Again')).toBeInTheDocument();
         expect(screen.getByText(/Oops! Something went wrong/i)).toBeInTheDocument();
     });
+
+    it('should log to console in development mode', () => {
+        const originalEnv = process.env.NODE_ENV;
+        process.env.NODE_ENV = 'development';
+        const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+        render(
+            <ErrorBoundary>
+                <ThrowError shouldThrow />
+            </ErrorBoundary>
+        );
+
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'ErrorBoundary caught an error:',
+            expect.any(Error),
+            expect.any(Object)
+        );
+
+        consoleErrorSpy.mockRestore();
+        process.env.NODE_ENV = originalEnv;
+    });
+
+    it('should show error details in development mode', () => {
+        const originalEnv = process.env.NODE_ENV;
+        process.env.NODE_ENV = 'development';
+
+        render(
+            <ErrorBoundary>
+                <ThrowError shouldThrow />
+            </ErrorBoundary>
+        );
+
+        // Should show error message in development
+        expect(screen.getByText(/Error: Test Error/)).toBeInTheDocument();
+
+        process.env.NODE_ENV = originalEnv;
+    });
+
+    it('should handle Go to Home button click', () => {
+        const originalLocation = globalThis.location;
+        delete (globalThis as any).location;
+        globalThis.location = { ...originalLocation, href: '' } as Location;
+
+        render(
+            <ErrorBoundary>
+                <ThrowError shouldThrow />
+            </ErrorBoundary>
+        );
+
+        const homeButton = screen.getByText('Go to Home');
+        fireEvent.click(homeButton);
+
+        expect(globalThis.location.href).toBe('/');
+
+        globalThis.location = originalLocation;
+    });
 });
