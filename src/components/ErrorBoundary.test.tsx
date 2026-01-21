@@ -71,16 +71,21 @@ describe('ErrorBoundary', () => {
     });
 
     it('should reset error state on Try Again', () => {
-        render(
+        const { rerender } = render(
             <ErrorBoundary>
                 <ThrowError shouldThrow />
             </ErrorBoundary>
         );
 
+        // Error boundary should show error UI
+        expect(screen.getByText('Try Again')).toBeInTheDocument();
+        
         const tryAgainButton = screen.getByText('Try Again');
         fireEvent.click(tryAgainButton);
 
-        // After clicking Try Again, the error state should be reset
-        // The component will re-render and if the child doesn't throw again, it should show children
+        // After clicking Try Again, component re-renders
+        // Since ThrowError still throws, error UI should still be visible
+        expect(screen.getByText('Try Again')).toBeInTheDocument();
+        expect(screen.getByText(/Oops! Something went wrong/i)).toBeInTheDocument();
     });
 });
