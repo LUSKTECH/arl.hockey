@@ -128,6 +128,7 @@ describe('ErrorBoundary', () => {
 
     it('should handle Go to Home button click', () => {
         const originalLocation = globalThis.location;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         delete (globalThis as any).location;
         globalThis.location = { ...originalLocation, href: '' } as Location;
 
