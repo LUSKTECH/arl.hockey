@@ -20,14 +20,12 @@ All security headers are configured in `netlify.toml`:
    ```bash
    VITE_SENTRY_DSN=your_actual_sentry_dsn
    SENTRY_AUTH_TOKEN=your_actual_auth_token
-   VITE_ROUTE_MSG_ORIGIN=*  # or specific origin for production
    ```
 
 ### Production (Netlify)
 Set these in Netlify dashboard under Site settings → Environment variables:
 - `VITE_SENTRY_DSN`
 - `SENTRY_AUTH_TOKEN`
-- `VITE_ROUTE_MSG_ORIGIN` (use specific origin, not `*`)
 
 ## 📊 Sentry Integration
 
