@@ -47,6 +47,8 @@ const Index = () => {
           style={{
             backgroundImage: "url('/images/hockey_action_1.webp')"
           }}
+          role="img"
+          aria-label="Hockey action background"
         ></div>
         <div className="relative container mx-auto px-4 py-24 text-center">
           <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight text-black dark:text-white drop-shadow-[0_2px_4px_rgba(255,255,255,0.8)] dark:drop-shadow-lg">
@@ -57,11 +59,11 @@ const Index = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center text-black dark:text-white drop-shadow-[0_1px_2px_rgba(255,255,255,0.8)] dark:drop-shadow-md">
             <div className="flex items-center gap-2 text-lg">
-              <MapPin className="h-5 w-5" />
+              <MapPin className="h-5 w-5" aria-hidden="true" />
               <span>Burlington, Ontario</span>
             </div>
             <div className="flex items-center gap-2 text-lg">
-              <Users className="h-5 w-5" />
+              <Users className="h-5 w-5" aria-hidden="true" />
               <span>Co-Ed • Beginner Friendly</span>
             </div>
           </div>
@@ -166,6 +168,9 @@ const Index = () => {
                 src={image} 
                 alt={`ARL Hockey action shot ${index + 1}`}
                 loading="lazy"
+                decoding="async"
+                width="640"
+                height="360"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
               />
             </div>

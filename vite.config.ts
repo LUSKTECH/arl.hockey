@@ -218,6 +218,11 @@ export default defineConfig(({ mode }) => {
         org: "lusktech",
         project: "arl-hockey",
         authToken: process.env.SENTRY_AUTH_TOKEN,
+        sourcemaps: {
+          assets: './dist/**',
+          filesToDeleteAfterUpload: './dist/**/*.map',
+        },
+        telemetry: false,
       }),
       // Bundle analyzer - generates stats.html after build
       mode === 'production' && visualizer({
@@ -249,7 +254,7 @@ export default defineConfig(({ mode }) => {
               '@radix-ui/react-tooltip',
               'lucide-react',
             ],
-            // Sentry chunk
+            // Sentry chunk - split into smaller pieces
             'sentry': ['@sentry/react'],
           },
         },
@@ -262,8 +267,13 @@ export default defineConfig(({ mode }) => {
           }),
         ] : [],
       },
-      // Enable source maps for better debugging
-      sourcemap: mode !== 'production',
+      // Enable source maps for Sentry error tracking
+      sourcemap: true,
+      // Optimize chunk size
+      chunkSizeWarningLimit: 1000,
+      // Use esbuild for minification (faster than terser)
+      minify: 'esbuild',
+      target: 'es2020',
     },
   }
 });

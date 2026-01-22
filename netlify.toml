@@ -2,6 +2,13 @@
   command = "npm run build"
   publish = "dist"
 
+# Sentry tunnel to avoid ad blockers
+[[redirects]]
+  from = "/tunnel"
+  to = "https://o4510622711152640.ingest.us.sentry.io/api/4510622711152640/envelope/"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
@@ -19,6 +26,7 @@
       img-src 'self' data: https: blob:;
       font-src 'self' data:;
       connect-src 'self' https://o4510622711152640.ingest.us.sentry.io https://www.google-analytics.com https://plausible.io;
+      worker-src 'self' blob:;
       frame-ancestors 'self';
       base-uri 'self';
       form-action 'self';

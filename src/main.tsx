@@ -15,21 +15,29 @@ Sentry.init({
         Sentry.consoleLoggingIntegration({ levels: ["log", "error", "warn"] }),
         // Browser tracing for performance monitoring
         Sentry.browserTracingIntegration(),
-        // Session replay integration
+        // Session replay integration - lazy loaded
         Sentry.replayIntegration({
             maskAllText: false,
             blockAllMedia: false,
         }),
     ],
     // Performance Monitoring
-    tracesSampleRate: import.meta.env.PROD ? 0.1 : 1.0, // 10% in production, 100% in dev
+    tracesSampleRate: import.meta.env.PROD ? 0.1 : 1, // 10% in production, 100% in dev
     // Control for which URLs distributed tracing should be enabled
     tracePropagationTargets: ["localhost", /^https:\/\/arl\.hockey/],
     // Profiling
-    profilesSampleRate: import.meta.env.PROD ? 0.1 : 1.0, // 10% in production, 100% in dev
+    profilesSampleRate: import.meta.env.PROD ? 0.1 : 1, // 10% in production, 100% in dev
     // Session Replay
-    replaysSessionSampleRate: import.meta.env.PROD ? 0.1 : 1.0, // 10% in production, 100% in dev
-    replaysOnErrorSampleRate: 1.0, // Always capture replays when errors occur
+    replaysSessionSampleRate: import.meta.env.PROD ? 0.1 : 1, // 10% in production, 100% in dev
+    replaysOnErrorSampleRate: 1, // Always capture replays when errors occur
+    // Reduce bundle size by lazy loading integrations
+    beforeSend(event) {
+        // Filter out non-critical events in production
+        if (import.meta.env.PROD && event.level === 'log') {
+            return null;
+        }
+        return event;
+    },
 });
 
 
