@@ -10,7 +10,9 @@ jobs:
   lint:
     name: Lint Code Base
     runs-on: ubuntu-latest
-    if: github.actor != 'dependabot[bot]' && github.actor != 'snyk-bot'
+    if: |
+      github.actor != 'dependabot[bot]' &&
+      !startsWith(github.head_ref, 'snyk-')
     permissions:
       contents: read
     steps:
@@ -32,7 +34,9 @@ jobs:
   test-and-analyze:
     name: Tests & Coverage
     runs-on: ubuntu-latest
-    if: github.actor != 'dependabot[bot]' && github.actor != 'snyk-bot'
+    if: |
+      github.actor != 'dependabot[bot]' &&
+      !startsWith(github.head_ref, 'snyk-')
     permissions:
       contents: read
     steps:
@@ -85,7 +89,9 @@ jobs:
     name: Sentry Release
     needs: [lint, test-and-analyze]
     runs-on: ubuntu-latest
-    if: github.actor != 'dependabot[bot]' && github.actor != 'snyk-bot'
+    if: |
+      github.actor != 'dependabot[bot]' &&
+      !startsWith(github.head_ref, 'snyk-')
     permissions:
       contents: read
     steps:
