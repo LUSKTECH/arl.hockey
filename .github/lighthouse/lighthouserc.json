@@ -34,7 +34,12 @@
         "largest-contentful-paint": ["warn", {"maxNumericValue": 2500}],
         "cumulative-layout-shift": ["warn", {"maxNumericValue": 0.1}],
         "total-blocking-time": ["warn", {"maxNumericValue": 300}],
-        "speed-index": ["warn", {"maxNumericValue": 3000}]
+        "speed-index": ["warn", {"maxNumericValue": 3000}],
+        "errors-in-console": ["warn", {"minScore": 0.9}],
+        "unused-javascript": ["warn", {"maxLength": 3}],
+        "uses-responsive-images": ["warn", {"maxLength": 10}],
+        "legacy-javascript": ["warn", {"maxLength": 2}],
+        "render-blocking-insight": ["warn", {"maxLength": 2}]
       }
     },
     "upload": {
