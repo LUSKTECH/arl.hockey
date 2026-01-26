@@ -156,21 +156,21 @@ const Index = () => {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-6xl mx-auto">
           {[
-            '/images/hockey_action_2.webp',
-            '/images/hockey_action_3.webp',
-            '/images/hockey_action_4.webp',
-            '/images/hockey_action_5.webp',
-            '/images/hockey_action_6.webp',
-            '/images/hockey_action_1.webp'
+            { src: '/images/hockey_action_2.webp', alt: 'ARL Hockey players on ice during game' },
+            { src: '/images/hockey_action_3.webp', alt: 'Hockey team celebrating goal' },
+            { src: '/images/hockey_action_4.webp', alt: 'Players skating in recreational hockey game' },
+            { src: '/images/hockey_action_5.webp', alt: 'Co-ed hockey team group photo' },
+            { src: '/images/hockey_action_6.webp', alt: 'Hockey action during ARL league game' },
+            { src: '/images/hockey_action_1.webp', alt: 'Players competing in friendly hockey match' }
           ].map((image, index) => (
-            <div key={image} className="aspect-video rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 bg-muted">
+            <div key={image.src} className="aspect-video rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 bg-muted">
               <img 
-                src={image} 
-                alt={`ARL Hockey action shot ${index + 1}`}
+                src={image.src} 
+                alt={image.alt}
                 loading="lazy"
                 decoding="async"
-                width="640"
-                height="360"
+                width="400"
+                height="225"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
               />
             </div>

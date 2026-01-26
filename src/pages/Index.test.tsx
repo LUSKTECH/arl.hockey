@@ -108,7 +108,9 @@ describe('Index Page', () => {
         // Verify alt text for accessibility
         images.forEach((img) => {
             expect(img).toHaveAttribute('alt');
-            expect(img.getAttribute('alt')).toMatch(/ARL Hockey action shot/);
+            const altText = img.getAttribute('alt');
+            expect(altText).toBeTruthy();
+            expect(altText).toMatch(/ARL Hockey|hockey|players|game|team/i);
         });
     });
 

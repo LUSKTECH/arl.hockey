@@ -271,9 +271,16 @@ export default defineConfig(({ mode }) => {
       sourcemap: true,
       // Optimize chunk size
       chunkSizeWarningLimit: 1000,
-      // Use esbuild for minification (faster than terser)
+      // Use esbuild for minification with tree shaking
       minify: 'esbuild',
       target: 'es2020',
+      // Enable CSS code splitting
+      cssCodeSplit: true,
+      // Optimize dependencies
+      commonjsOptions: {
+        include: [/node_modules/],
+        transformMixedEsModules: true,
+      },
     },
   }
 });
