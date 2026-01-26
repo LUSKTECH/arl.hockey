@@ -101,8 +101,8 @@ describe('Index Page', () => {
         
         expect(screen.getByText('League in Action')).toBeInTheDocument();
         
-        // Check for images
-        const images = screen.getAllByRole('img');
+        // Check for actual img elements (not divs with role="img")
+        const images = screen.getAllByRole('img').filter((el) => el.tagName === 'IMG');
         expect(images.length).toBeGreaterThan(0);
         
         // Verify alt text for accessibility
