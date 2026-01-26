@@ -17,18 +17,15 @@ export function Routes(props: React.ComponentProps<typeof RRD.Routes>) {
 
 /** Simple pass-through for HashRouter */
 export function HashRouter(props: React.ComponentProps<typeof RRD.HashRouter>) {
-  const RouterComponent = RRD.HashRouter;
-  return <RouterComponent {...props} />;
+  return React.createElement(RRD.HashRouter, { ...props });
 }
 
 /** Simple pass-through for BrowserRouter */
 export function BrowserRouter(props: React.ComponentProps<typeof RRD.BrowserRouter>) {
-  const RouterComponent = RRD.BrowserRouter;
-  return <RouterComponent {...props} />;
+  return React.createElement(RRD.BrowserRouter, { ...props });
 }
 
 /** Simple pass-through for MemoryRouter */
 export function MemoryRouter(props: React.ComponentProps<typeof RRD.MemoryRouter>) {
-  const RouterComponent = RRD.MemoryRouter;
-  return <RouterComponent {...props} />;
+  return React.createElement(RRD.MemoryRouter, { ...props });
 }
