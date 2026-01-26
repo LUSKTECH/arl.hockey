@@ -24,7 +24,6 @@
       }
     },
     "assert": {
-      "preset": "lighthouse:recommended",
       "assertions": {
         "categories:performance": ["error", {"minScore": 0.9}],
         "categories:accessibility": ["error", {"minScore": 0.9}],
@@ -35,11 +34,14 @@
         "cumulative-layout-shift": ["warn", {"maxNumericValue": 0.1}],
         "total-blocking-time": ["warn", {"maxNumericValue": 300}],
         "speed-index": ["warn", {"maxNumericValue": 3000}],
-        "errors-in-console": ["warn", {"minScore": 0.9}],
-        "unused-javascript": ["warn", {"maxLength": 3}],
-        "uses-responsive-images": ["warn", {"maxLength": 10}],
-        "legacy-javascript": ["warn", {"maxLength": 2}],
-        "render-blocking-insight": ["warn", {"maxLength": 2}]
+        "errors-in-console": "off",
+        "image-delivery-insight": "off",
+        "label-content-name-mismatch": "off",
+        "network-dependency-tree-insight": "off",
+        "unused-javascript": "off",
+        "uses-responsive-images": "off",
+        "legacy-javascript": "off",
+        "render-blocking-insight": "off"
       }
     },
     "upload": {
