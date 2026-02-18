@@ -1,16 +1,23 @@
-import { render, screen, waitFor } from '@testing-library/react'
-import { describe, it, expect } from 'vitest'
+import { render } from '@testing-library/react'
+import { describe, it, expect, vi } from 'vitest'
 import App from './App'
 
+// Mock Sentry
+vi.mock('@sentry/react', () => ({
+  startSpan: vi.fn((config, callback) => callback()),
+  captureException: vi.fn(),
+  ErrorBoundary: ({ children }: { children: React.ReactNode }) => children,
+}))
+
+// Mock analytics
+vi.mock('@/lib/analytics', () => ({
+  trackExternalLink: vi.fn(),
+}))
+
 describe('App', () => {
-    it('renders without crashing', async () => {
+    it('renders without crashing', () => {
         const { container } = render(<App />)
-        
-        // Wait for router to initialize and render
-        await waitFor(() => {
-            expect(container.querySelector('body')).toBeTruthy()
-        }, { timeout: 5000 })
-        
         expect(container).toBeTruthy()
+        expect(container.firstChild).toBeTruthy()
     })
 })

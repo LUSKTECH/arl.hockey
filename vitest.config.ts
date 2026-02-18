@@ -26,8 +26,8 @@ export default defineConfig({
     resolve: {
         alias: {
             "@": path.resolve(__dirname, "./src"),
-            // Add the same alias as vite.config for testing
-            "react-router-dom-original": "react-router-dom",
+            // For tests, use original react-router-dom directly
+            "react-router-dom": "react-router-dom",
         },
     },
 })
