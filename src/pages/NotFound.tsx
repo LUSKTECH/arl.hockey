@@ -17,7 +17,7 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-ice-white to-secondary dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-linear-to-br from-ice-white to-secondary dark:from-gray-900 dark:to-gray-800">
       {/* Theme Toggle */}
       <div className="absolute top-4 right-4 z-50">
         <ThemeToggle />
