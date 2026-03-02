@@ -33,7 +33,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-ice-white to-secondary dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-linear-to-br from-ice-white to-secondary dark:from-gray-900 dark:to-gray-800">
       {/* Theme Toggle */}
       <div className="absolute top-4 right-4 z-50">
         <ThemeToggle />
@@ -41,7 +41,7 @@ const Index = () => {
       
       {/* Hero Section */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-navy-deep/95 to-primary/85 dark:from-gray-900/95 dark:to-gray-800/90"></div>
+        <div className="absolute inset-0 bg-linear-to-r from-navy-deep/95 to-primary/85 dark:from-gray-900/95 dark:to-gray-800/90"></div>
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-20 dark:opacity-30"
           style={{
@@ -81,7 +81,7 @@ const Index = () => {
                   <Users className="h-10 w-10 text-primary-foreground" />
                 </div>
                 <h2 className="text-3xl font-bold mb-4 text-navy-deep dark:text-primary">ARL Hockey League</h2>
-                <p className="text-lg text-muted-foreground mb-6 leading-relaxed flex-grow">
+                <p className="text-lg text-muted-foreground mb-6 leading-relaxed grow">
                   Join our social co-ed hockey league serving Burlington, Hamilton, Milton, and Oakville. 
                   Perfect for beginners and experienced players looking for a fun, non-competitive environment.
                 </p>
@@ -116,7 +116,7 @@ const Index = () => {
                   <Shield className="h-10 w-10 text-primary-foreground dark:text-secondary-foreground" />
                 </div>
                 <h2 className="text-3xl font-bold mb-4 text-navy-deep dark:text-primary">ARL Board</h2>
-                <p className="text-lg text-muted-foreground mb-6 leading-relaxed flex-grow">
+                <p className="text-lg text-muted-foreground mb-6 leading-relaxed grow">
                   The governing body of the ARL, committed to transparency and fair play. 
                   Access league operations, disciplinary information, and administrative updates.
                 </p>

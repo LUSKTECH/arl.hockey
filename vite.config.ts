@@ -1,5 +1,6 @@
 // vite.config.ts
 import { defineConfig, type Plugin } from 'vite';
+import tailwindcss from '@tailwindcss/vite';
 import { sentryVitePlugin } from "@sentry/vite-plugin";
 import react from '@vitejs/plugin-react-swc';
 import fs from 'node:fs/promises';
@@ -209,6 +210,7 @@ export default defineConfig(({ mode }) => {
       port: 8080,
     },
     plugins: [
+      tailwindcss(),
       react(),
       mode === 'development' &&
       componentTagger(),
