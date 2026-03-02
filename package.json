@@ -12,7 +12,7 @@
     "build:dev": "vite build --mode development --sourcemap",
     "build:map": "vite build --sourcemap",
     "build:analyze": "vite build && vite-bundle-visualizer",
-    "lint": "eslint .",
+    "lint": "oxlint .",
     "preview": "vite preview",
     "preview:dev": "npm run build:dev && npm run preview",
     "test": "vitest",
@@ -49,7 +49,7 @@
     "@radix-ui/react-toggle-group": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.4",
     "@sentry/react": "^10.36.0",
-    "@sentry/vite-plugin": "^4.8.0",
+    "@sentry/vite-plugin": "^5.1.1",
     "@supabase/supabase-js": "^2.93.0",
     "@tanstack/react-query": "^5.90.20",
     "class-variance-authority": "^0.7.1",
@@ -73,13 +73,15 @@
     "vaul": "^1.1.2",
     "zod": "^4.3.6"
   },
+  "overrides": {
+    "rollup": "^4.59.0"
+  },
   "devDependencies": {
     "@babel/generator": "^7.28.0",
     "@babel/parser": "^7.28.6",
     "@babel/traverse": "^7.28.0",
     "@babel/types": "^7.28.0",
     "@codecov/rollup-plugin": "^1.9.1",
-    "@eslint/js": "^9.39.2",
     "@tailwindcss/typography": "^0.5.15",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.1",
@@ -94,17 +96,13 @@
     "@vitejs/plugin-react-swc": "^4.2.2",
     "@vitest/coverage-v8": "^4.0.16",
     "autoprefixer": "^10.4.23",
-    "eslint": "^9.39.2",
-    "eslint-plugin-react-hooks": "^7.0.1",
-    "eslint-plugin-react-refresh": "^0.4.26",
-    "globals": "^17.0.0",
     "jsdom": "^28.0.0",
     "lovable-tagger": "^1.1.9",
+    "oxlint": "^1.51.0",
     "postcss": "^8.4.47",
     "rollup-plugin-visualizer": "^6.0.5",
     "tailwindcss": "^3.4.19",
     "typescript": "^5.5.3",
-    "typescript-eslint": "^8.51.0",
     "vite": "^7.3.1",
     "vitest": "^4.0.16"
   }
