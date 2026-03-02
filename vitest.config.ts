@@ -28,6 +28,7 @@ export default defineConfig({
             "@": path.resolve(__dirname, "./src"),
             // For tests, use original react-router-dom directly
             "react-router-dom": "react-router-dom",
+            "react-router-dom-original": "react-router-dom",
         },
     },
 })
