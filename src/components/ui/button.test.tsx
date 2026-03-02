@@ -17,7 +17,7 @@ describe('Button', () => {
         expect(button).toHaveClass('bg-destructive');
     });
 
-    it('should render with outline-solid variant', () => {
+    it('should render with outline variant', () => {
         render(<Button variant="outline">Outline</Button>);
         const button = screen.getByRole('button', { name: /outline/i });
         expect(button).toHaveClass('border');
