@@ -100,7 +100,7 @@
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react-swc": "4.3.0",
     "@vitest/coverage-v8": "4.1.4",
-    "jsdom": "28.1.0",
+    "jsdom": "29.1.0",
     "lovable-tagger": "1.1.13",
     "oxlint": "1.60.0",
     "rollup-plugin-visualizer": "6.0.5",
