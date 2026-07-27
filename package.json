@@ -85,7 +85,7 @@
     "@babel/generator": "7.29.1",
     "@babel/parser": "7.29.2",
     "@babel/traverse": "7.29.0",
-    "@babel/types": "7.29.0",
+    "@babel/types": "8.0.4",
     "@codecov/rollup-plugin": "^2.0.1",
     "@sentry/vite-plugin": "^5.4.0",
     "@tailwindcss/vite": "^4.3.3",
