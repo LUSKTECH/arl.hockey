@@ -27,7 +27,7 @@ on:
 jobs:
   lighthouse:
     name: Lighthouse Audit
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     if: github.actor != 'dependabot[bot]'
     permissions:
       contents: read
