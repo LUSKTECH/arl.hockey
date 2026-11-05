@@ -245,18 +245,25 @@ export default defineConfig(({ mode }) => {
     build: {
       rollupOptions: {
         output: {
-          manualChunks: {
+          // Function form: required by Rolldown (Vite 8), also valid for Rollup
+          manualChunks(id: string) {
+            const inPkg = (...pkgs: string[]) =>
+              pkgs.some((pkg) => id.includes(`/node_modules/${pkg}/`));
             // Vendor chunk for React and related libraries
-            'react-vendor': ['react', 'react-dom', 'react-router-dom-original'],
+            if (inPkg('react', 'react-dom', 'react-router-dom')) return 'react-vendor';
             // UI components chunk
-            'ui-vendor': [
-              '@radix-ui/react-slot',
-              '@radix-ui/react-toast',
-              '@radix-ui/react-tooltip',
-              'lucide-react',
-            ],
-            // Sentry chunk - split into smaller pieces
-            'sentry': ['@sentry/react'],
+            if (
+              inPkg(
+                '@radix-ui/react-slot',
+                '@radix-ui/react-toast',
+                '@radix-ui/react-tooltip',
+                'lucide-react',
+              )
+            )
+              return 'ui-vendor';
+            // Sentry chunk
+            if (inPkg('@sentry/react')) return 'sentry';
+            return undefined;
           },
         },
         plugins: process.env.CODECOV_TOKEN ? [
@@ -272,8 +279,8 @@ export default defineConfig(({ mode }) => {
       sourcemap: true,
       // Optimize chunk size
       chunkSizeWarningLimit: 1000,
-      // Use esbuild for minification with tree shaking
-      minify: 'esbuild',
+      // Vite 8 default minifier (Oxc); esbuild is no longer bundled with Vite
+      minify: 'oxc',
       target: 'es2020',
       // Enable CSS code splitting
       cssCodeSplit: true,
